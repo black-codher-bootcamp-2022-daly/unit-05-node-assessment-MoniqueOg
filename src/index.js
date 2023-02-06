@@ -21,13 +21,13 @@ app.use("/content", express.static(path.join(__dirname, "public")));
 app.get("/", (_, res) => {
   res.sendFile("./public/index.html", { root: __dirname }, (err) => {
     console.log(err);
-    });
+  });
   //res.end(); loses content and content aborted before having chance to load
 });
 
 app.get('/todos', (_, res) => {
   console.log(todos);
-  res.header("Content-Type","application/json");
+  res.header("Content-Type", "application/json");
   res.sendFile(todoFilePath, { root: __dirname });
   res.send();
 });
@@ -37,27 +37,28 @@ app.get('/todos/overdue', (_, res) => {
   console.log(todos);
   let todosList = todos.filter((todo) => todo.dueDate < new Date());
   res.send(todosList);
-  });
+});
 
 //Add GET request with path '/todos/completed'
 app.get('/todos/completed', (_, res) => {
   console.log(todos);
   let todosList = todos.filter((todo) => todo.completed === true);
   res.send(todosList);
-  });
+});
 
 //Add POST request with path '/todos'
-app.post('/todos', (req, res) => {
+app.post('/todos', (_, res) => {
   let newTodo = req.body;
-  newTodo.id = uuidv4();
+  newTodo.id = todos.length + 1;
+  //uuidv4() is a function that generates a unique id
   newTodo.completed = false;
   todos.push(newTodo);
   res.send(newTodo);
 });
 
 //Add PATCH request with path '/todos/:id
-app.patch('/todos/:id', (req, res) => {
-  let id = req.params.id;
+app.patch('/todos/:id', (_, res) => {
+  let id = _.params.id; // exapmle of how to get id from request
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
     todo.title = req.body.title;
@@ -68,11 +69,12 @@ app.patch('/todos/:id', (req, res) => {
     res.send(todo);
   } else {
     res.status(404).send();
+    //status(404) is a function that sets the respose for status code for not found
   }
 });
 
 //Add POST request with path '/todos/:id/complete
-app.post('/todos/:id/complete', (req, res) => {
+app.post('/todos/:id/complete', (_, res) => {
   let id = req.params.id;
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
@@ -84,7 +86,7 @@ app.post('/todos/:id/complete', (req, res) => {
 });
 
 //Add POST request with path '/todos/:id/undo
-app.post('/todos/:id/undo', (req, res) => {
+app.post('/todos/:id/undo', (_, res) => {
   let id = req.params.id;
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
@@ -96,7 +98,7 @@ app.post('/todos/:id/undo', (req, res) => {
 });
 
 //Add DELETE request with path '/todos/:id
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', (_, res) => {
   let id = req.params.id;
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
@@ -108,7 +110,7 @@ app.delete('/todos/:id', (req, res) => {
 });
 
 app.listen(port, function () {
-    console.log(`Node server is running... http://localhost:${port}`);
+  console.log(`Node server is running... http://localhost:${port}`);
 });
 
 module.exports = app;
