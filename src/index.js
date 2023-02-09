@@ -109,8 +109,4 @@ app.delete('/todos/:id', (_, res) => {
   }
 });
 
-app.listen(port, function () {
-  console.log(`Node server is running... http://localhost:${port}`);
-});
-
 module.exports = app;
