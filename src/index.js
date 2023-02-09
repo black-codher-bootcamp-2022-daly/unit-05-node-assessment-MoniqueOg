@@ -8,8 +8,8 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const todoFilePath = process.env.BASE_JSON_PATH;
 
-//Read todos from todos.json into variable
-let todos = require(__dirname + todoFilePath);
+// Read todos from todos.json into variable
+const getTodos = () => require(path.join(__dirname, todoFilePath));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -26,6 +26,7 @@ app.get("/", (_, res) => {
 });
 
 app.get('/todos', (_, res) => {
+  const todos = getTodos();
   console.log(todos);
   res.header("Content-Type", "application/json");
   res.sendFile(todoFilePath, { root: __dirname });
@@ -34,6 +35,7 @@ app.get('/todos', (_, res) => {
 
 //Add GET request with path '/todos/overdue'
 app.get('/todos/overdue', (_, res) => {
+  const todos = getTodos();
   console.log(todos);
   let todosList = todos.filter((todo) => todo.dueDate < new Date());
   res.send(todosList);
@@ -41,6 +43,7 @@ app.get('/todos/overdue', (_, res) => {
 
 //Add GET request with path '/todos/completed'
 app.get('/todos/completed', (_, res) => {
+  const todos = getTodos();
   console.log(todos);
   let todosList = todos.filter((todo) => todo.completed === true);
   res.send(todosList);
@@ -49,6 +52,7 @@ app.get('/todos/completed', (_, res) => {
 //Add POST request with path '/todos'
 app.post('/todos', (_, res) => {
   let newTodo = req.body;
+  const todos = getTodos();
   newTodo.id = todos.length + 1;
   //uuidv4() is a function that generates a unique id
   newTodo.completed = false;
@@ -59,6 +63,7 @@ app.post('/todos', (_, res) => {
 //Add PATCH request with path '/todos/:id
 app.patch('/todos/:id', (_, res) => {
   let id = _.params.id; // exapmle of how to get id from request
+  const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
     todo.title = req.body.title;
@@ -76,6 +81,7 @@ app.patch('/todos/:id', (_, res) => {
 //Add POST request with path '/todos/:id/complete
 app.post('/todos/:id/complete', (_, res) => {
   let id = req.params.id;
+  const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
     todo.completed = true;
@@ -88,6 +94,7 @@ app.post('/todos/:id/complete', (_, res) => {
 //Add POST request with path '/todos/:id/undo
 app.post('/todos/:id/undo', (_, res) => {
   let id = req.params.id;
+  const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
     todo.completed = false;
@@ -100,6 +107,7 @@ app.post('/todos/:id/undo', (_, res) => {
 //Add DELETE request with path '/todos/:id
 app.delete('/todos/:id', (_, res) => {
   let id = req.params.id;
+  const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
   if (todo) {
     todos = todos.filter((todo) => todo.id !== id);
