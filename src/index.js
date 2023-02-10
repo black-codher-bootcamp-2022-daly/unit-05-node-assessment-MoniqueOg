@@ -1,15 +1,16 @@
-require('dotenv').config();
-const fs = require('fs');
-const express = require('express');
+require("dotenv").config();
+const fs = require("fs");
+const express = require("express");
 const app = express();
-const path = require('path');
+const path = require("path");
 const port = 8080;
-const bodyParser = require('body-parser');
-const { v4: uuidv4 } = require('uuid');
+const bodyParser = require("body-parser");
+const { v4: uuidv4 } = require("uuid");
 const todoFilePath = process.env.BASE_JSON_PATH;
 
 // Read todos from todos.json into variable
-const getTodos = () => require(path.join(__dirname, todoFilePath));
+const getTodos = () =>
+  fs.readFileSync(path.join(__dirname, todoFilePath), { encoding: "utf-8" });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -25,7 +26,7 @@ app.get("/", (_, res) => {
   //res.end(); loses content and content aborted before having chance to load
 });
 
-app.get('/todos', (_, res) => {
+app.get("/todos", (_, res) => {
   const todos = getTodos();
   console.log(todos);
   res.header("Content-Type", "application/json");
@@ -34,7 +35,7 @@ app.get('/todos', (_, res) => {
 });
 
 //Add GET request with path '/todos/overdue'
-app.get('/todos/overdue', (_, res) => {
+app.get("/todos/overdue", (_, res) => {
   const todos = getTodos();
   console.log(todos);
   let todosList = todos.filter((todo) => todo.dueDate < new Date());
@@ -42,7 +43,7 @@ app.get('/todos/overdue', (_, res) => {
 });
 
 //Add GET request with path '/todos/completed'
-app.get('/todos/completed', (_, res) => {
+app.get("/todos/completed", (_, res) => {
   const todos = getTodos();
   console.log(todos);
   let todosList = todos.filter((todo) => todo.completed === true);
@@ -50,7 +51,7 @@ app.get('/todos/completed', (_, res) => {
 });
 
 //Add POST request with path '/todos'
-app.post('/todos', (_, res) => {
+app.post("/todos", (_, res) => {
   let newTodo = req.body;
   const todos = getTodos();
   newTodo.id = todos.length + 1;
@@ -61,7 +62,7 @@ app.post('/todos', (_, res) => {
 });
 
 //Add PATCH request with path '/todos/:id
-app.patch('/todos/:id', (_, res) => {
+app.patch("/todos/:id", (_, res) => {
   let id = _.params.id; // exapmle of how to get id from request
   const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
@@ -79,7 +80,7 @@ app.patch('/todos/:id', (_, res) => {
 });
 
 //Add POST request with path '/todos/:id/complete
-app.post('/todos/:id/complete', (_, res) => {
+app.post("/todos/:id/complete", (_, res) => {
   let id = req.params.id;
   const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
@@ -92,7 +93,7 @@ app.post('/todos/:id/complete', (_, res) => {
 });
 
 //Add POST request with path '/todos/:id/undo
-app.post('/todos/:id/undo', (_, res) => {
+app.post("/todos/:id/undo", (_, res) => {
   let id = req.params.id;
   const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
@@ -105,7 +106,7 @@ app.post('/todos/:id/undo', (_, res) => {
 });
 
 //Add DELETE request with path '/todos/:id
-app.delete('/todos/:id', (_, res) => {
+app.delete("/todos/:id", (_, res) => {
   let id = req.params.id;
   const todos = getTodos();
   let todo = todos.find((todo) => todo.id === id);
