@@ -14,7 +14,7 @@ Ensure your finished repository meets all of the [Assessment Criteria](#assessme
 
 1. The `index.html` file should reference a `favicon.ico`, `logo.png` and a `styles.css` file.
 
-1. Add a `<title>` tag that includes your name e.g. Welcome to `Monica's` Todo List API
+1. Add a `<title>` tag that includes your name e.g. Welcome to `Monique's` Todo List API
 
 1. Include the table of endpoints below in your homepage (`index.html`) as a description of how to consume (use) your API.
 
@@ -71,7 +71,7 @@ fs.writeFile(__dirname + process.env.BASE_JSON_PATH,  content, err => {
       console.error(err)
       return
     }
-}
+})
 ```
 
 3. Run the following commands to install any dependencies:
