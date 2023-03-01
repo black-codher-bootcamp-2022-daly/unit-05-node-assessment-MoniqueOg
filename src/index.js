@@ -15,6 +15,11 @@ const getTodos = () => {
   return JSON.parse(fs.readFileSync(__dirname + todoFilePath))
 };
 
+const saveTodos = (todos) => {
+  const todosJSON = JSON.stringify(todos, null, 2);
+  return fs.writeFileSync(__dirname + todoFilePath, todosJSON);
+}
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.raw());
@@ -88,11 +93,10 @@ app.post('/todos', (req, res) => {
       created: new Date().toISOString(),
       due,
       completed: false,
-  };
+    };
     todos.push(newTodo);
-    const todosJSON = JSON.stringify(todos, null, 2);
-    fs.writeFileSync("newTodo.json", todosJSON);
-    console.log(JSON.parse(todosJSON))
+    saveTodos(todos)
+    //console.log(JSON.parse(todosJSON))
     res.setHeader("Content-Type", "application/json").status(201).send(newTodo);
   }
   else {
@@ -110,7 +114,7 @@ app.patch('/todos/:id', (req, res) => {
   if (todo) {
     todo.name = newTodo;
     todo.id = uuidv4()
-    console.log(todo)
+    saveTodos(todos)
     res.setHeader("Content-Type", "application/json").status(200).send();
   } else {
     res.status(404).send();
@@ -124,7 +128,8 @@ app.post('/todos/:id/complete', (req, res) => {
 
   const todo = todos.find((todo) => todo.id === id);
   if (todo && todo.completed === false) {
-    res.setHeader("Content-Type", "/application/json/").send(todos);
+    saveTodos(todos)
+    res.setHeader("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
   }
@@ -137,6 +142,7 @@ app.post('/todos/:id/undo', (_, res) => {
   const todo = todos.find((todo) => todo.id === id && todo.completed === true);
 
   if (todo) {
+    saveTodos(todos)
     res.header("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
@@ -147,11 +153,11 @@ app.post('/todos/:id/undo', (_, res) => {
 app.delete('/todos/:id', (_, res) => {
   const todos = getTodos();
   const id = _.params.id;
-   const todo = todos.find((todo) => todo.id === id);
+  const todo = todos.find((todo) => todo.id === id);
   if (todos === -1) {
     res.setHeader("Content-Type", "/application/json/");
     todos.splice(todos.indexOf(todos), 3);
-    res.json(todos);
+    saveTodos(todos)
   } else {
     res.status(404).send();
   }
