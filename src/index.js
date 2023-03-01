@@ -90,7 +90,7 @@ app.post('/todos', (req, res) => {
       completed: false,
   };
     todos.push(newTodo);
-    const todosJSON = JSON.stringify(todos && newTodo, null, 2);
+    const todosJSON = JSON.stringify(todos, null, 2);
     fs.writeFileSync("newTodo.json", todosJSON);
     console.log(JSON.parse(todosJSON))
     res.setHeader("Content-Type", "application/json").status(201).send(newTodo);
@@ -136,8 +136,8 @@ app.post('/todos/:id/undo', (_, res) => {
   const id = _.params.id;
   const todo = todos.find((todo) => todo.id === id && todo.completed === true);
 
-  if (todos) {
-    res.header("Content-Type", "/application/json/").send(todo);
+  if (todo) {
+    res.header("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
   }
@@ -147,8 +147,7 @@ app.post('/todos/:id/undo', (_, res) => {
 app.delete('/todos/:id', (_, res) => {
   const todos = getTodos();
   const id = _.params.id;
-
-  const todo = todos.find((todo) => todo.id === id);
+   const todo = todos.find((todo) => todo.id === id);
   if (todos === -1) {
     res.setHeader("Content-Type", "/application/json/");
     todos.splice(todos.indexOf(todos), 3);
@@ -157,5 +156,19 @@ app.delete('/todos/:id', (_, res) => {
     res.status(404).send();
   }
 });
+
+/*if (id === '19d539a11189-4a60-3a4c-4434-01507581') {
+  todos.findByIdAndDelete(id, function(err, todo) {
+      if (err) return res.status(404).send('Not Found');
+
+      if (!todo || todo.name !== 'Learn to juggle') 
+      return res.status(404).send('Not Found');
+
+      res.status(200).send('OK');
+  });
+} else {
+  res.status(404).send('Not Found');
+}
+});*/
 
 module.exports = app;
