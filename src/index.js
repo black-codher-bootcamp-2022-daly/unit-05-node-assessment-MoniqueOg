@@ -161,7 +161,7 @@ app.delete('/todos/:id', (_, res) => {
     res.setHeader("Content-Type", "/application/json/");
    // todos.splice(todos.indexOf(todos), 3);  
     saveTodos(todo)
-    res.status().send();
+    res.status(200).send();
   } else {
     res.status(404).send();
   }
