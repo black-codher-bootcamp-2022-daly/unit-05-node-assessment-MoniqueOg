@@ -129,6 +129,7 @@ app.post('/todos/:id/complete', (req, res) => {
   const todo = todos.find((todo) => todo.id === id);
   if (todo && todo.completed === false) {
     saveTodos(todos)
+    console.log(todos)
     res.setHeader("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
@@ -143,6 +144,7 @@ app.post('/todos/:id/undo', (_, res) => {
 
   if (todo) {
     saveTodos(todos)
+    //console.log(todos)
     res.header("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
@@ -153,11 +155,13 @@ app.post('/todos/:id/undo', (_, res) => {
 app.delete('/todos/:id', (_, res) => {
   const todos = getTodos();
   const id = _.params.id;
-  const todo = todos.find((todo) => todo.id === id);
-  if (todos === -1) {
+  const todo = todos.filter((todo) => todo.id !== id);
+  // === -1
+  if (todo) {
     res.setHeader("Content-Type", "/application/json/");
-    todos.splice(todos.indexOf(todos), 3);
-    saveTodos(todos)
+   // todos.splice(todos.indexOf(todos), 3);  
+    saveTodos(todo)
+    res.status().send();
   } else {
     res.status(404).send();
   }
