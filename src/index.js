@@ -96,7 +96,6 @@ app.post('/todos', (req, res) => {
     };
     todos.push(newTodo);
     saveTodos(todos)
-    //console.log(JSON.parse(todosJSON))
     res.setHeader("Content-Type", "application/json").status(201).send(newTodo);
   }
   else {
@@ -122,15 +121,14 @@ app.patch('/todos/:id', (req, res) => {
 });
 
 // //Add POST request with path '/todos/:id/complete'
-app.post('/todos/:id/complete', (req, res) => {
+app.post('/todos/:id/complete', (_, res) => {
   const todos = getTodos();
-  const id = req.body.id;
-
+  const id = _.params.id;
   const todo = todos.find((todo) => todo.id === id);
-  if (todo && todo.completed === false) {
+  if (todo) {
+    todo.completed = true
     saveTodos(todos)
-    console.log(todos)
-    res.setHeader("Content-Type", "/application/json/").send();
+    res.header("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
   }
@@ -139,12 +137,11 @@ app.post('/todos/:id/complete', (req, res) => {
 // //Add POST request with path '/todos/:id/undo'
 app.post('/todos/:id/undo', (_, res) => {
   const todos = getTodos();
-  const id = _.params.id;
-  const todo = todos.find((todo) => todo.id === id && todo.completed === true);
-
+  let id = _.params.id;
+  const todo = todos.find((todo) => todo.id === id);
   if (todo) {
+    todo.completed = false
     saveTodos(todos)
-    //console.log(todos)
     res.header("Content-Type", "/application/json/").send();
   } else {
     res.status(404).send();
@@ -154,31 +151,16 @@ app.post('/todos/:id/undo', (_, res) => {
 // //Add DELETE request with path '/todos/:id'
 app.delete('/todos/:id', (_, res) => {
   const todos = getTodos();
-  const id = _.params.id;
-  const todo = todos.filter((todo) => todo.id !== id);
-  // === -1
-  if (todo) {
-    res.setHeader("Content-Type", "/application/json/");
-   // todos.splice(todos.indexOf(todos), 3);  
-    saveTodos(todo)
-    res.status(200).send();
+  let id = _.params.id;
+  const todo = todos.filter((todo) => todo.id == id);
+  const removeTodo = todos.filter((todo) => todo.id !== id);
+  if (todo.length > 0) {
+    saveTodos(removeTodo)
+    res.setHeader("Content-Type", "/application/json/").status(200).send();
   } else {
     res.status(404).send();
   }
 });
 
-/*if (id === '19d539a11189-4a60-3a4c-4434-01507581') {
-  todos.findByIdAndDelete(id, function(err, todo) {
-      if (err) return res.status(404).send('Not Found');
-
-      if (!todo || todo.name !== 'Learn to juggle') 
-      return res.status(404).send('Not Found');
-
-      res.status(200).send('OK');
-  });
-} else {
-  res.status(404).send('Not Found');
-}
-});*/
 
 module.exports = app;
